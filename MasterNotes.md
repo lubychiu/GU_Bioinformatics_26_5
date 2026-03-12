@@ -24,4 +24,4 @@ Confirm fastqc is available: $ fastqc -h
 OUTPUT OF FASTQC GOING TO /viral_genomics/cleanedreads
 $ THIS IS INCOMPLETE. FILL IN.  
 ## Future tasks:
-1. $ gzip *.fastq 2. Upload to bucket 
+1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
