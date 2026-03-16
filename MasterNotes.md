@@ -25,3 +25,12 @@ OUTPUT OF FASTQC GOING TO /viral_genomics/cleanedreads
 $ THIS IS INCOMPLETE. FILL IN.  
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
+
+# 3/16
+Goals: Upload FASTQC file to bucket, Upload gzipped raw file to bucket
+Actually accomplished:
+## 1. could not upload gzip file to bucket
+It said dsr84@georgetown does not have access to upload to bucket ???
+
+## 2. Upload FASTQC to bucket 
+gcloud storage cp 
