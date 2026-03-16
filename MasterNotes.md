@@ -36,7 +36,7 @@ It said dsr84@georgetown does not have access to upload to bucket ???
 ## 2. Upload FASTQC to bucket 
 gcloud storage cp gs://gu-biology-dept-class/SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class
 
-## 3. Parameters for trimmomatic
+## 3. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
 We are planning to use the same parameters for HW 4
 Script Luby path: Cleaned reads Luby path: /ycy201/viral_genomics/trimmedreads/slurm 
@@ -76,12 +76,27 @@ trimmomatic PE -threads 4 \
         MINLEN:75
 
 ## 4. Run FASTQC again
-fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.gz
-fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmSE1.fq.gz RR6996011_R2_TrmSE1.fq.gz
+$fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.gz
+$fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmSE1.fq.gz RR6996011_R2_TrmSE1.fq.gz
 
-## Downloading fastqc outputs to local computer
+## 5. Downloading fastqc outputs to local computer
 FROM LOCAL COMPUTER, $ gcloud compute scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 We got errors saying the source must be remote if the file is local, but are unsure what that means ^
 What worked: 
 FROM LOCAL COMPUTER, 
 $ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
+
+Then the same for R2 PE
+$ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
+
+## 6. Evaluating trimmomatic results
+R1 looks great! R2 not so much, so we're going to run the trimmed file of R2 again with the same parameters
+
+## 7. Run trimmomatic again 
+
+
+SCRIPT:
+
+
+New outputs: PE2
+
