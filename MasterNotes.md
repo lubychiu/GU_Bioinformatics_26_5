@@ -3,16 +3,16 @@ Goals: run FASTQC, trimmommatic, then FASTQC again
 What this accomplishes: finding correct parameters to trim data, improve the quality of our data
 FASTQC Dori path: /dsr84/viral_genomics/raw
 FASTQC Luby path: /ycy201/viral_genomics/raw
-Cleaned reads Dori path: /dsr84/viral_genomics/cleanedreads
-Cleaned reads Luby path: /ycy201/viral_genomics/trimmedreads
+Cleaned reads Dori path: /dsr84/viral_genomics/trimmed_reads
+Cleaned reads Luby path: /ycy201/viral_genomics/trimmed_reads
 
 Actually accomplished: 
-## 1. loaded conda environment 
+## 1. Loaded conda environment 
 $ module load anaconda 3
 $ conda create -n sra_env -c bioconda sra-tools
 -> y
 $ conda activate sra_env
-## 2. loaded data
+## 2. Loaded data
 entered /viral_genomics/raw
 $ prefetch SAMN08784153
 change files into FASTQ format:
@@ -21,15 +21,16 @@ $ fasterq-dump *.sra
 Enter interactive mode on a compute node (from where you are) with: $srun --pty bash
 $ module load fastqc
 Confirm fastqc is available: $ fastqc -h
-OUTPUT OF FASTQC GOING TO /viral_genomics/cleanedreads
-$ THIS IS INCOMPLETE. FILL IN.  
+fastqc -o fastqc_out SRR6996011.fastq
+Output FASTQC Luby path: /ycy201//viral_genomics/fastqc_out
+ 
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
 
 # 3/16
 Goals: Upload FASTQC file to bucket, Upload gzipped raw file to bucket, run trimmomatic, run FASTQC again
 Actually accomplished:
-## 1. could not upload gzip file to bucket
+## 1. Could not upload gzip file to bucket
 It said dsr84@georgetown does not have access to upload to bucket ???
 
 ## 2. Upload FASTQC to bucket 
@@ -74,4 +75,13 @@ trimmomatic PE -threads 4 \
         SLIDINGWINDOW:4:15 \
         MINLEN:75
 
-## 4. run FASTQC again
+## 4. Run FASTQC again
+fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.gz
+fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmSE1.fq.gz RR6996011_R2_TrmSE1.fq.gz
+
+## Downloading fastqc outputs to local computer
+FROM LOCAL COMPUTER, $ gcloud compute scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
+We got errors saying the source must be remote if the file is local, but are unsure what that means ^
+What worked: 
+FROM LOCAL COMPUTER, 
+$ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
