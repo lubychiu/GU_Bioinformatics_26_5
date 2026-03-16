@@ -90,11 +90,9 @@ Then the same for R2 PE
 $ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
 
 ## 6. Evaluating trimmomatic results
-R1 looks great! R2 not so much, so we're going to run the trimmed file of R2 again with the same parameters
+R1 looks great! R2 not so much, so we're going to trim them both again using the same parameters
 
 ## 7. Run trimmomatic again 
-
-
 SCRIPT:
 #!/bin/bash
 #SBATCH --job-name="trim_viral_genomics2"
@@ -133,3 +131,4 @@ trimmomatic PE -threads 4 \
 
 New outputs: PE2
 
+## Run FASTQC on the second-trimmed files
