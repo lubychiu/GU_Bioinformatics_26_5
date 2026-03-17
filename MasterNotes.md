@@ -131,5 +131,9 @@ trimmomatic PE -threads 4 \
 
 New outputs: PE2
 
-## Run FASTQC on the second-trimmed files
+## 8. Run FASTQC on the second-trimmed files
 fastqc -o trimmed_fastqc_out2 SRR6996011_R1_trmPE2.fq.gz SRR6996011_R2_trmPE2.fq.gz
+Oh they still don't look great, probably because using the exact same parameters doesn't do anything. 
+
+# 3/17
+Today we're going to move on with the workflow, but we will go back and trim with new parameters and then run through this again.
