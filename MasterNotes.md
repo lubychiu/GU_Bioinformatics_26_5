@@ -147,6 +147,9 @@ That didn't work! Let's try again.
 Overall folder: viral_genomics
 Within viral_genomics: fastqc, logs, megahit, raw, slurmscripts, trimmed_reads
 
-### Luby organizaiton 
+### Luby organization
+Overall folder: viral_genomics
+Within viral_genomics: raw, fastqc_out, trimmed_reads, megahit
 
-## 3. 
+## 3. Re-run trimmomatic on the raw files with a changed window parameter, again.
+We changed SLIDINGWINDOW to 2:20 instead of 2:15. Reads are now of an adequately high quality.
