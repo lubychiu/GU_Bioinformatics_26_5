@@ -80,14 +80,16 @@ $fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.
 $fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmSE1.fq.gz RR6996011_R2_TrmSE1.fq.gz
 
 ## 5. Downloading fastqc outputs to local computer
+### Incorrect 
 FROM LOCAL COMPUTER, $ gcloud compute scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 We got errors saying the source must be remote if the file is local, but are unsure what that means ^
-What worked: 
+
+### What worked: 
 FROM LOCAL COMPUTER, 
-$ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
+$ gcloud compute scp m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 
 Then the same for R2 PE
-$ gcloud compute m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
+$ gcloud compute scp m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
 
 ## 6. Evaluating trimmomatic results
 R1 looks great! R2 not so much, so we're going to trim them both again using the same parameters
@@ -136,4 +138,15 @@ fastqc -o trimmed_fastqc_out2 SRR6996011_R1_trmPE2.fq.gz SRR6996011_R2_trmPE2.fq
 Oh they still don't look great, probably because using the exact same parameters doesn't do anything. 
 
 # 3/17
-Today we're going to move on with the workflow, but we will go back and trim with new parameters and then run through this again.
+## 1. Re-run trimmomatic on the raw files with a changed window parameter. 
+We changed SLIDINGWINDOW to 2:15 instead of 4:15.
+That didn't work! Let's try again. 
+
+## 2. Reorganize files 
+### Dori organization
+Overall folder: viral_genomics
+Within viral_genomics: fastqc, logs, megahit, raw, slurmscripts, trimmed_reads
+
+### Luby organizaiton 
+
+## 3. 
