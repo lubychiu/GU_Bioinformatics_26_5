@@ -34,7 +34,7 @@ Actually accomplished:
 It said dsr84@georgetown does not have access to upload to bucket ???
 
 ## 2. Upload FASTQC to bucket 
-gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class
+gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class/
 
 ## 3. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
