@@ -22,7 +22,7 @@ Enter interactive mode on a compute node (from where you are) with: $srun --pty 
 $ module load fastqc
 Confirm fastqc is available: $ fastqc -h
 fastqc -o fastqc_out SRR6996011.fastq
-Output FASTQC Luby path: /ycy201//viral_genomics/fastqc_out
+Output FASTQC Luby path: /yc1201//viral_genomics/fastqc_out
  
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
@@ -34,7 +34,7 @@ Actually accomplished:
 It said dsr84@georgetown does not have access to upload to bucket ???
 
 ## 2. Upload FASTQC to bucket 
-gcloud storage cp gs://gu-biology-dept-class/SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class
+gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class
 
 ## 3. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
