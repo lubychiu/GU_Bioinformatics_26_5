@@ -153,3 +153,44 @@ Within viral_genomics: raw, fastqc_out, trimmed_reads, megahit
 
 ## 3. Re-run trimmomatic on the raw files with a changed window parameter, again.
 We changed SLIDINGWINDOW to 2:20 instead of 2:15. Reads are now of an adequately high quality.
+
+## 4. Megahit
+#!/bin/bash
+#SBATCH --job-name=megahit_SRR6996011   	# how job appears in the queue
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=8                 
+#SBATCH --mem=32G                         
+#SBATCH --time=03:00:00                   
+#SBATCH --output=/home/dsr84/viral_genomics/logs/megahit_test1.%j.out      
+#SBATCH --error=/home/dsr84/viral_genomics/logs/megahit_test1.%j.err       
+
+#note %j = job ID
+
+#==== Load mamba/conda module (students: no need to change) ====
+module load mamba
+source $(mamba info --base)/etc/profile.d/conda.sh
+
+#Activate the environment where you had MEGAHIT installed
+conda activate megahit-env
+
+#==== Set paths and filenames (students: edit this block!) ====
+
+#Directory where the cleaned reads live
+READDIR=/home/dsr84/viral_genomics/trimmed_reads
+
+#Input read files (paired-end)
+READ1=${READDIR}/EC-12_R1_trmPE5.fq.gz
+READ2=${READDIR}/EC-12_R2_trmPE5.fq.gz
+
+#Output directory (give it a name, it will be created by MEGAHIT)
+OUTDIR=/home/dsr84/viral_genomics/megahit/megahit_out
+
+#==== Run MEGAHIT ====
+
+megahit \
+  -1 ${READ1} \
+  -2 ${READ2} \
+  -t ${SLURM_CPUS_PER_TASK} \
+  -o ${OUTDIR}
+
+echo "Done. Contigs should be in: ${OUTDIR}/final.contigs.fa"
