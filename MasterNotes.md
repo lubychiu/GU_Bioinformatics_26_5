@@ -2,9 +2,9 @@
 Goals: run FASTQC, trimmommatic, then FASTQC again
 What this accomplishes: finding correct parameters to trim data, improve the quality of our data
 FASTQC Dori path: /dsr84/viral_genomics/raw
-FASTQC Luby path: /ycy201/viral_genomics/raw
+FASTQC Luby path: /yc1201/viral_genomics/raw
 Cleaned reads Dori path: /dsr84/viral_genomics/trimmed_reads
-Cleaned reads Luby path: /ycy201/viral_genomics/trimmed_reads
+Cleaned reads Luby path: /yc1201/viral_genomics/trimmed_reads
 
 Actually accomplished: 
 ## 1. Loaded conda environment 
@@ -39,7 +39,7 @@ gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class
 ## 3. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
 We are planning to use the same parameters for HW 4
-Script Luby path: Cleaned reads Luby path: /ycy201/viral_genomics/trimmedreads/slurm 
+Script Luby path: Cleaned reads Luby path: /yc1201/viral_genomics/trimmedreads/slurm 
 Script:
 #!/bin/bash
 #SBATCH --job-name="trim_viral_genomics"
