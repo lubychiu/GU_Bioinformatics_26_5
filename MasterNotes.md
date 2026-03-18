@@ -231,6 +231,9 @@ AvqQual: 0 (that doesn't seem good)
 GC%: 49.42
 sum_n: 0
 
+Dori: Created $ nano seqkit_stats in /home/dsr84/viral_genomics/megahit/megahit_out
+
+
 
 
 
