@@ -202,3 +202,35 @@ Output: 21900 reads
 Upload assembled reads to github
 FROM LOCAL COMPUTER
 $gcloud compute scp m12-controller:/home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa ~/Desktop/
+Uploaded to GitHub
+
+$ module load mamba/
+$ mamba activate megahit-env
+$ mamba install -c bioconda seqkit
+Say Y
+$ seqkit stats -a final.contigs.fa
+
+### Seqkit stats: 
+file: final.contigs.fa
+format: FASTA
+type: DNA
+num_seqs: 21900
+sum_len: 12,797,626 (total length of all contigs)
+min_len: 205 (not helpful)
+avg_len: 584.4 (probably not helpful) 
+max_len: 65,854 (helpful!)
+Q1: 305
+Q2: 388
+Q3: 536
+sum_gap: 0
+N50: 573
+N50_num: 1,533
+Q20(%): 0
+Q30(%): 0
+AvqQual: 0 (that doesn't seem good)
+GC%: 49.42
+sum_n: 0
+
+
+
+
