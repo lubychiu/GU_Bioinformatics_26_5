@@ -89,7 +89,7 @@ FROM LOCAL COMPUTER,
 $ gcloud compute scp m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 
 Then the same for R2 PE
-$ gcloud compute scp m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
+$ gcloud compute scp m12-controller/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
 
 ## 6. Evaluating trimmomatic results
 R1 looks great! R2 not so much, so we're going to trim them both again using the same parameters
@@ -194,3 +194,11 @@ megahit \
   -o ${OUTDIR}
 
 echo "Done. Contigs should be in: ${OUTDIR}/final.contigs.fa"
+
+## 5. Assess assmebled reads
+$ grep ">" final.contigs.fa | wc -l 
+Output: 21900 reads 
+
+Upload assembled reads to github
+FROM LOCAL COMPUTER
+$gcloud compute scp m12-controller:/home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa ~/Desktop/
