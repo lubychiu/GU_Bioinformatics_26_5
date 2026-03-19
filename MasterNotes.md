@@ -246,4 +246,47 @@ Run set up for database:
 $ virsorter setup -d db -j 4
 
 ### Script:
+luby script
+#!/bin/bash
+#SBATCH --job-name=final_contigs_visorter1
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=20G
+#SBATCH --time=03:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=yc1201@georgetown.edu
+#SBATCH --output=/home/yc1201/viral_genomics/visorter1.%j.out
+#SBATCH --error=/home/yc1201/viral_genomics/visorter1.%j.err
+
+# === Load mamba ===
+module load mamba
+source $(mamba info --base)/etc/profile.d/conda.sh
+
+# Activate the environment where you had VirSorter2 installed
+mamba activate vs2-env
+
+# === Set paths and filenames ===
+# Set up directories
+INDIR=/home/yc1201/viral_genomics/megahit/
+OUTROOT=/home/yc1201/viral_genomics/visorter/
+mkdir -p "${OUTROOT}"
+
+SAMPLE_ID=sample5
+INPUT="${INDIR}/dori_luby_final.contigs.fa"
+OUTDIR="${OUTROOT}/vs2-${SAMPLE_ID}"
+
+mkdir -p "${OUTDIR}"
+
+
+# ==== Run virsorter2 with >5kb cutoff and DNA virus categories first
+echo "Running VirSorter2 on ${INPUT}"
+virsorter run \
+  -w "${OUTDIR}" \
+  -i "${INPUT}" \
+  --keep-original-seq \
+  --include-groups dsDNAphage,NCLDV,ssDNA \
+  --min-length 5000
+
+echo "Done."
+
 
