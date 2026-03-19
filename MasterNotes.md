@@ -233,7 +233,17 @@ sum_n: 0
 
 Dori: Created $ nano seqkit_stats in /home/dsr84/viral_genomics/megahit/megahit_out
 
+# 3/19
+Goals: Run virsorter, cluster
 
+## 1. Virsorter
+### Setup:
+$ module load mamba
+$ mamba create -y -n vs2-env -c conda-forge -c bioconda virsorter
+$ mamba activate vs2-env
+$ rm -rf db 	
+Run set up for database:
+$ virsorter setup -d db -j 4
 
-
+### Script:
 
