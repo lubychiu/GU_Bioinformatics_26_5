@@ -260,7 +260,7 @@ luby script
 
 # === Load mamba ===
 module load mamba
-source $(mamba info --base)/etc/profile.d/conda.sh
+conda activate vs2-env
 
 # Activate the environment where you had VirSorter2 installed
 mamba activate vs2-env
@@ -283,10 +283,10 @@ echo "Running VirSorter2 on ${INPUT}"
 virsorter run \
   -w "${OUTDIR}" \
   -i "${INPUT}" \
+  --db-dir /home/yc1201/viral_genomics/virsorter-db \
   --keep-original-seq \
   --include-groups dsDNAphage,NCLDV,ssDNA \
   --min-length 5000
-
 echo "Done."
 
 Dori's version (all on one line): virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa --keep-original-seq --include-groups dsDNAphage,NCLDV,ssDNA --min-length 5000
