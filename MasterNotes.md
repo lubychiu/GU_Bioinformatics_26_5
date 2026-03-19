@@ -292,3 +292,12 @@ echo "Done."
 Dori's version (all on one line): virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa --keep-original-seq --include-groups dsDNAphage,NCLDV,ssDNA --min-length 5000
 (It worked!)
 
+### Filtering for 5kB
+# Counting how many contigs
+Need to use
+mamba install -c bioconda seqkit
+before
+seqkit seq -m 5000 final-viral-combined.fa | grep -c ">"
+which gives 128.
+Then,
+seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
