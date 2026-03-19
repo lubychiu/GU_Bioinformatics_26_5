@@ -289,4 +289,6 @@ virsorter run \
 
 echo "Done."
 
+Dori's version (all on one line): virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa --keep-original-seq --include-groups dsDNAphage,NCLDV,ssDNA --min-length 5000
+(It worked!)
 
