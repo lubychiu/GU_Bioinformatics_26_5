@@ -323,3 +323,8 @@ $ wc -l votu_seeds.txt
 $ grep -c ">" votus_final.fna
 
 Final location for all files from clustering: /home/yc1201/viral_genomics/clustering
+
+## Upload to class bucket
+From inside the clustering directory, rename the final file to avoid confusion
+$ mv votus_final.fna luby_dori_votus_final.fna
+$ gcloud storage cp luby_dori_votus_final.fna gs://gu-biology-dept-class/
