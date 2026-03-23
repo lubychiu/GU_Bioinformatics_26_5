@@ -301,3 +301,25 @@ seqkit seq -m 5000 final-viral-combined.fa | grep -c ">"
 which gives 128.
 Then,
 seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
+
+# 3/23 Clustering
+
+$ module load mamba
+$ mamba create -n votu-env -c bioconda -c conda-forge vclust
+$ mamba activate votu-env
+
+$ vclust prefilter -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o fltr.txt
+$ vclust align -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o ani.tsv --filter fltr.txt
+$ vclust cluster -i ani.tsv -o clusters.tsv --ids ani.ids.tsv --metric ani --ani 0.95 --out-repr
+
+$ awk '{print $2}' clusters.tsv | sort -u > votu_seeds.txt
+
+$ mamba deactivate
+$ mamba activate megahit-env
+
+$ seqkit grep -f votu_seeds.txt /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa > votus_final.fna
+
+$ wc -l votu_seeds.txt
+$ grep -c ">" votus_final.fna
+
+Final location for all files from clustering: /home/yc1201/viral_genomics/clustering
