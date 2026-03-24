@@ -86,7 +86,7 @@ We got errors saying the source must be remote if the file is local, but are uns
 
 ### What worked: 
 FROM LOCAL COMPUTER, 
-$ gcloud compute scp m12-controller:scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
+$ gcloud compute scp m12-controller:/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 
 Then the same for R2 PE
 $ gcloud compute scp m12-controller/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
