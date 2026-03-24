@@ -369,6 +369,8 @@ echo "Running CheckV on ${INPUT}"
 checkv end_to_end "${INPUT}" "${OUTDIR}" -d "${CHECKVDB}" -t ${SLURM_CPUS_PER_TASK}
 echo "Done."
 
+Our contigs look good! Mostly lower quality but we have a few with "comeplete" or "high quality"
+
 ## Check quality_summary_votus.tsv
 $ less quality_summary_votus.tsv
 
