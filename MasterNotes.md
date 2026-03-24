@@ -328,3 +328,49 @@ Final location for all files from clustering: /home/yc1201/viral_genomics/cluste
 From inside the clustering directory, rename the final file to avoid confusion
 $ mv votus_final.fna luby_dori_votus_final.fna
 $ gcloud storage cp luby_dori_votus_final.fna gs://gu-biology-dept-class/
+
+# CheckV
+## Set up checkv database
+$ module load checkv	
+$ checkv download_database ./
+
+## Script luby
+
+#!/bin/bash
+#SBATCH --job-name=checkv
+#SBATCH --output=/home/yc1201/viral_genomics/checkv-%j.out
+#SBATCH --error=/home/yc1201/viral_genomics/checkv-%j.err
+#SBATCH --time=03:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=16G
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=yc1201@georgetown.edu
+
+# ==== Load checkv program module (students: no need to change) ====
+
+module load checkv
+
+
+# ==== Set variables, paths, and filenames (students: edit this block!) ====
+
+CHECKVDB="/home/yc1201/viral_genomics/checkv/checkv-db-v1.5"
+
+SAMPLE_ID="vOTUs"
+INPUT="/home/yc1201/viral_genomics/clustering/luby_dori_votus_final.fna"
+OUTDIR="/home/yc1201/viral_genomics/checkv/${SAMPLE_ID}"
+
+mkdir -p "${OUTDIR}"
+
+
+# ==== run checkv (students: no need to change. The second line is the command) ====
+echo "Running CheckV on ${INPUT}"
+checkv end_to_end "${INPUT}" "${OUTDIR}" -d "${CHECKVDB}" -t ${SLURM_CPUS_PER_TASK}
+echo "Done."
+
+## Check quality_summary_votus.tsv
+$ less quality_summary_votus.tsv
+
+## Grab pooled vOTUs from the bucket
+$ gcloud storage cp gs://gu-biology-dept-class/ClassProject/votus_10kb_6samples.fna /home/yc1201/viral_genomics/bowtie
