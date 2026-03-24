@@ -258,15 +258,15 @@ luby script
 #SBATCH --output=/home/yc1201/viral_genomics/visorter1.%j.out
 #SBATCH --error=/home/yc1201/viral_genomics/visorter1.%j.err
 
-# === Load mamba ===
+ === Load mamba ===
 module load mamba
 conda activate vs2-env
 
-# Activate the environment where you had VirSorter2 installed
+Activate the environment where you had VirSorter2 installed
 mamba activate vs2-env
 
-# === Set paths and filenames ===
-# Set up directories
+=== Set paths and filenames ===
+Set up directories
 INDIR=/home/yc1201/viral_genomics/megahit/
 OUTROOT=/home/yc1201/viral_genomics/visorter/
 mkdir -p "${OUTROOT}"
@@ -277,8 +277,7 @@ OUTDIR="${OUTROOT}/vs2-${SAMPLE_ID}"
 
 mkdir -p "${OUTDIR}"
 
-
-# ==== Run virsorter2 with >5kb cutoff and DNA virus categories first
+==== Run virsorter2 with >5kb cutoff and DNA virus categories first
 echo "Running VirSorter2 on ${INPUT}"
 virsorter run \
   -w "${OUTDIR}" \
@@ -293,7 +292,7 @@ Dori's version (all on one line): virsorter run -w "/home/dsr84/viral_genomics/v
 (It worked!)
 
 ### Filtering for 5kB
-# Counting how many contigs
+==== Counting how many contigs
 Need to use
 mamba install -c bioconda seqkit
 before
@@ -302,7 +301,9 @@ which gives 128.
 Then,
 seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
 
-# 3/23 Clustering
+# 3/23 
+
+## Clustering
 
 $ module load mamba
 $ mamba create -n votu-env -c bioconda -c conda-forge vclust
@@ -329,12 +330,12 @@ From inside the clustering directory, rename the final file to avoid confusion
 $ mv votus_final.fna luby_dori_votus_final.fna
 $ gcloud storage cp luby_dori_votus_final.fna gs://gu-biology-dept-class/
 
-# CheckV
-## Set up checkv database
+## CheckV
+### Set up checkv database
 $ module load checkv	
 $ checkv download_database ./
 
-## Script luby
+### Script luby
 
 #!/bin/bash
 #SBATCH --job-name=checkv
@@ -348,12 +349,12 @@ $ checkv download_database ./
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=yc1201@georgetown.edu
 
-# ==== Load checkv program module (students: no need to change) ====
+ ==== Load checkv program module (students: no need to change) ====
 
 module load checkv
 
 
-# ==== Set variables, paths, and filenames (students: edit this block!) ====
+ ==== Set variables, paths, and filenames (students: edit this block!) ====
 
 CHECKVDB="/home/yc1201/viral_genomics/checkv/checkv-db-v1.5"
 
@@ -363,8 +364,7 @@ OUTDIR="/home/yc1201/viral_genomics/checkv/${SAMPLE_ID}"
 
 mkdir -p "${OUTDIR}"
 
-
-# ==== run checkv (students: no need to change. The second line is the command) ====
+ ==== run checkv (students: no need to change. The second line is the command) ====
 echo "Running CheckV on ${INPUT}"
 checkv end_to_end "${INPUT}" "${OUTDIR}" -d "${CHECKVDB}" -t ${SLURM_CPUS_PER_TASK}
 echo "Done."
@@ -376,3 +376,5 @@ $ less quality_summary_votus.tsv
 
 ## Grab pooled vOTUs from the bucket
 $ gcloud storage cp gs://gu-biology-dept-class/ClassProject/votus_10kb_6samples.fna /home/yc1201/viral_genomics/bowtie
+
+## Bowtie
