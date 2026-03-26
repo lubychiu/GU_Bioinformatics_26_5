@@ -377,7 +377,9 @@ $ less quality_summary_votus.tsv
 ## Grab pooled vOTUs from the bucket
 $ gcloud storage cp gs://gu-biology-dept-class/ClassProject/votus_10kb_6samples.fna /home/yc1201/viral_genomics/bowtie
 
+# 3/26
 ## Bowtie
+### Script
 #!/bin/bash
 #SBATCH --job name=bowtie2_vOTUs
 #SBATCH --output=/home/yc1201/viral_genomics/bowtie-%j.out
@@ -387,18 +389,18 @@ $ gcloud storage cp gs://gu-biology-dept-class/ClassProject/votus_10kb_6samples.
 #SBATCH --time=8:00:00
 #SBATCH --mem=16G
 
-# ---------SET UP----------
+ ---------SET UP----------
 SAMPLE="sample6_yc1201"
 INDEX="/home/yc1201/viral_genomics/bowtie/votu_index"
 OUTPUTDIR="/home/yc1201/viral_genomics/bowtie"
 
-# --------- LOAD MODULES ----------
+--------- LOAD MODULES ----------
 module purge
 module load bowtie2/2.5.4
 
-# --------- RUN BOWTIE2 AND PIPE TO SAMTOOLS ----------
+ --------- RUN BOWTIE2 AND PIPE TO SAMTOOLS ----------
 
-# First make output and log directories; move into OUTPUTDIR
+-----First make output and log directories; move into OUTPUTDIR
 mkdir -p "${OUTPUTDIR}"
 cd "${OUTPUTDIR}"
 mkdir -p logs
@@ -410,10 +412,65 @@ bowtie2 -p 8 -x "${INDEX}" -1 "/home/yc1201/viral_genomics/trimmed_reads/SRR6996
 
 echo "Finished running bowtie2 and performing compression"
 
-#---------sort and index files
+---------sort and index files
 echo "Sorting"
 samtools sort "${SAMPLE}.bam" > "${SAMPLE}_sorted.bam"
 
 echo "Indexing"
 samtools index "${SAMPLE}_sorted.bam"
+
+## After Bowtie
+BAM file (binary code takes up less space than SAM file) was uploaded to the bucket
+File was too large for normal cp function, so was downloaded to local computer and uploaded to gcloud bucket GUI
+
+## Data visualization!
+Combined vOTUs were converted into an excel spreadsheet and uploaded to R under the variable name votus. 
+Dori script: 
+
+tpm_threshold <- 10                      # keep vOTUs with max TPM > this
+heatmap_colors <- c("#440154", "#31688e", "#35b779", "#fde725")
+
+library(readxl)
+library(pheatmap)
+
+================================= Keep Contig and TPM columns only
+tpm_cols <- grepl("TPM$", names(votus))
+cov_tpm <- votus[ , c("Contig", names(votus)[tpm_cols])]
+
+================================= Remove S1k141_26921_full
+cov_tpm <- subset(cov_tpm, Contig != "S1k141_26921||full")
+
+================================= Optional filter: drop very low-abundance vOTUs
+cov_tpm$max_tpm <- apply(cov_tpm[ , -1], 1, max, na.rm = TRUE)
+cov_tpm <- subset(cov_tpm, max_tpm > tpm_threshold)
+cov_tpm$max_tpm <- NULL
+
+=================================  If everything got filtered out (threshold too high), warn and stop
+if (nrow(cov_tpm) == 0) {
+  stop("No vOTUs passed the TPM threshold. Try lowering tpm_threshold.")
+}
+
+================================= Make matrix for heatmap (rows = vOTUs, cols = samples)
+mat <- as.matrix(cov_tpm[ , -1])
+rownames(mat) <- cov_tpm$Contig
+
+================================= Log-transform for nicer color scaling
+mat_log <- log10(mat + 1)
+
+================================= Draw heat map
+pheatmap(mat_log,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         scale = "none",
+         color = colorRampPalette(heatmap_colors)(100),
+         fontsize_row = 4,
+         fontsize_col = 8,
+         main = "vOTU relative abundance (log10 TPM + 1)")
+
+### Resulting heatmap 
+
+# Notes
+Lines in scripts with ------ should be commented 
+
+# Organization
 
