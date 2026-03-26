@@ -489,4 +489,15 @@ virsorter: outputs of virsorter
 votus: sorted votus
 
 ## Luby
+directory: viral_genomics
+subdirectories: bowtie, checkv, clustering, raw, visorter, fastqc_out, trimmed_reads, megahit, virsorter-db
+bowtie: slurm script for bowtie, sample5_yc1201_sorted.bam, sample5_yc1201.bam, sample5_yc1201_sorted.bam.bai, votus_10kb_6samples.fna, votu_index.1.bt2, votu_index.2.bt2, votu_index.3.bt2, votu_index.4.bt2, votu_index.rev.1.bt2, votu_index.rev.2.bt2
+checkv: vOTUs, slurm script for checkv, checkv-db-v1.5
+clustering: luby_dori_votus_final.fna, votu_seeds.txt, fltr.txt, clusters.tsv, ani.tsv, ani.ids.tsv
+raw: SRR6996011 data
+visorter: vs2-sample5, slurm script for virsorter
+fastqc_out: SRR6996011.sra_2_fastqc.html (after trimmomatic)
+trimmed_reads: slurm script for trimmomatic, trimmed reads
+megahit: dori_luby_final.contigs.fa, slurm script for megahit
+virsorter-db: virsorter database
 
