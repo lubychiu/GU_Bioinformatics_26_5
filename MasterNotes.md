@@ -473,4 +473,20 @@ pheatmap(mat_log,
 Lines in scripts with ------ should be commented 
 
 # Organization
+## Dori
+directory: viral_genomics
+subdirectories: checkv, class_votus, db, fastqc, logs, megahit, raw, slurmscripts, trimmed_reads, virsorter, votus
+checkv: files after running checkv
+class_votus: file: votus_10kb_6samples.fna (combined votus)
+db: conda_envs, group, hmm, rbs for virsorter
+fastqc: output fastqc files before and after trimming
+logs: logs and errors for all jobs
+megahit: output files for megahit
+raw: raw data
+slurmscripts: all scripts
+trimmed_reads: trimmed reads after several iterations of trimming parameters 
+virsorter: outputs of virsorter
+votus: sorted votus
+
+## Luby
 
