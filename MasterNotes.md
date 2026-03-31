@@ -303,7 +303,7 @@ seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
 
 # 3/23 
 
-## Clustering
+## Clustering using vclust
 
 $ module load mamba
 $ mamba create -n votu-env -c bioconda -c conda-forge vclust
