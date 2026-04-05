@@ -301,55 +301,18 @@ $ checkv download_database ./
 ```
 Slurm script can be found in checkv file.
 
-Our contigs look good! Mostly lower quality but we have a few with "comeplete" or "high quality"
-
 ## Check quality_summary_votus.tsv
 $ less quality_summary_votus.tsv
+
+Our contigs look good! Mostly lower quality but we have a few with "comeplete" or "high quality"
 
 ## Grab pooled vOTUs from the bucket
 $ gcloud storage cp gs://gu-biology-dept-class/ClassProject/votus_10kb_6samples.fna /home/yc1201/viral_genomics/bowtie
 
 # 3/26
 ## Bowtie
-### Script
-#!/bin/bash
-#SBATCH --job name=bowtie2_vOTUs
-#SBATCH --output=/home/yc1201/viral_genomics/bowtie-%j.out
-#SBATCH --error=/home/yc1201/viral_genomics/bowtie-%j.err
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=yc1201@georgetown.edu
-#SBATCH --time=8:00:00
-#SBATCH --mem=16G
 
- ---------SET UP----------
-SAMPLE="sample6_yc1201"
-INDEX="/home/yc1201/viral_genomics/bowtie/votu_index"
-OUTPUTDIR="/home/yc1201/viral_genomics/bowtie"
-
---------- LOAD MODULES ----------
-module purge
-module load bowtie2/2.5.4
-
- --------- RUN BOWTIE2 AND PIPE TO SAMTOOLS ----------
-
------First make output and log directories; move into OUTPUTDIR
-mkdir -p "${OUTPUTDIR}"
-cd "${OUTPUTDIR}"
-mkdir -p logs
-
-echo "Running bowtie2 on sample ${SAMPLE}"
-
-bowtie2 -p 8 -x "${INDEX}" -1 "/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R1_trmPE5.fq.gz" -2 " /home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R2_trmPE5.fq.gz" \
-| samtools view -bS - > "${SAMPLE}.bam"
-
-echo "Finished running bowtie2 and performing compression"
-
----------sort and index files
-echo "Sorting"
-samtools sort "${SAMPLE}.bam" > "${SAMPLE}_sorted.bam"
-
-echo "Indexing"
-samtools index "${SAMPLE}_sorted.bam"
+Bowtie identifies viral species by aligning vOTUs to databases. Slurm script can be found in bowtie.
 
 ## After Bowtie
 BAM file (binary code takes up less space than SAM file) was uploaded to the bucket
