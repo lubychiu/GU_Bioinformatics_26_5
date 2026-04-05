@@ -28,6 +28,7 @@ $ srun --pty bash
 $ module load fastqc
 # Confirm fastqc is available:
 $ fastqc -h
+# run fastqc 
 $ fastqc -o fastqc_out SRR6996011.fastq
 ```
 Output FASTQC Luby path: /yc1201//viral_genomics/fastqc_out
@@ -56,43 +57,14 @@ $ gcloud storage cp SRR6996011.sra_2_fastqc.gzip gs://gu-biology-dept-class/
 $ gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class/
 ```
 ## 4. Run trimmomatic 
-Based on graph, quality is worst after base 186 (all in the red) 
+Based on FASTQC on raw reads, quality is worst after base 186 (all in the red) 
 We are planning to use the same parameters for HW 4
-Script Luby path: Cleaned reads Luby path: /yc1201/viral_genomics/trimmedreads/slurm 
-Script:
-#!/bin/bash
-#SBATCH --job-name="trim_viral_genomics"
-#SBATCH --output=/home/yc1201/viral_genomics/trimmed_reads/%x.o%j
-#SBATCH --mail-type=END,FAIL --mail-user=yc1201@georgetown.edu
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --time=03:00:00
-#SBATCH --mem=10G
 
-#Load Trimmomatic module ("aliases" needed for GU HPC setup here)
-shopt -s expand_aliases
-module load trimmomatic
+Initial trimming script can be found in trimmomatic1
+Parameters:
+```bash
 
-#Define paths and variables
-adapters=/home/yc1201/HW4/HW4_input_files/TruSeq3-PE.fa
-R1=/home/yc1201/viral_genomics/raw/SRR6996011/SRR6996011.sra_1.fastq
-R2=/home/yc1201/viral_genomics/raw/SRR6996011/SRR6996011.sra_2.fastq
-output_R1_PE=/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R1_trmPE1.fq.gz
-output_R2_PE=/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R2_trmPE1.fq.gz
-output_R1_SE=/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R1_trmSE1.fq.gz
-output_R2_SE=/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R2_trmSE1.fq.gz
-
-trimmomatic PE -threads 4 \
-        $R1 \
-	$R2 \
-	$output_R1_PE $output_R1_SE \
-        $output_R2_PE $output_R2_SE \
-        ILLUMINACLIP:$adapters:2:30:10 \
-        LEADING:10 \
-        TRAILING:10 \
-        SLIDINGWINDOW:4:15 \
-        MINLEN:75
+```
 
 ## 5. Run FASTQC again
 $fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.gz
