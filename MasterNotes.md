@@ -10,7 +10,7 @@ What this accomplishes: finding correct parameters to trim data, improve the qua
 ```bash
 $ module load anaconda 3
 $ conda create -n sra_env -c bioconda sra-tools
--> y
+# y
 $ conda activate sra_env
 ```
 ## 2. Loaded data
@@ -150,121 +150,107 @@ Megahit assembles quality reads into contigs.
 Slurm script can be found in megahit file.
 
 ## 6. Assess assmebled reads
+
 ```bash
 $ grep ">" final.contigs.fa | wc -l
 ```
 Output: 21900 reads 
 
 Upload assembled reads to github
-FROM LOCAL COMPUTER
-$gcloud compute scp m12-controller:/home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa ~/Desktop/
+```bash
+# FROM LOCAL COMPUTER
+$ gcloud compute scp m12-controller:/home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa ~/Desktop/
+```
 Uploaded to GitHub
 
+```bash
 $ module load mamba/
 $ mamba activate megahit-env
 $ mamba install -c bioconda seqkit
-Say Y
+# Say Y
 $ seqkit stats -a final.contigs.fa
+```
 
 ### Seqkit stats: 
-file: final.contigs.fa
-format: FASTA
-type: DNA
-num_seqs: 21900
-sum_len: 12,797,626 (total length of all contigs)
-min_len: 205 (not helpful)
-avg_len: 584.4 (probably not helpful) 
-max_len: 65,854 (helpful!)
-Q1: 305
-Q2: 388
-Q3: 536
-sum_gap: 0
-N50: 573
-N50_num: 1,533
-Q20(%): 0
-Q30(%): 0
-AvqQual: 0 (that doesn't seem good)
-GC%: 49.42
-sum_n: 0
+- file: final.contigs.fa
+- format: FASTA
+- type: DNA
+- num_seqs: 21900
+- sum_len: 12,797,626 (total length of all contigs)
+- min_len: 205 (not helpful)
+- avg_len: 584.4 (probably not helpful) 
+- max_len: 65,854 (helpful!)
+- Q1: 305
+- Q2: 388
+- Q3: 536
+- sum_gap: 0
+- N50: 573
+- N50_num: 1,533
+- Q20(%): 0
+- Q30(%): 0
+- AvqQual: 0 
+- GC%: 49.42
+- sum_n: 0
 
-Dori: Created $ nano seqkit_stats in /home/dsr84/viral_genomics/megahit/megahit_out
+We decided to move forward with any sample that included a maximum contig of over 10,000 base pairs, so our data moved forward. 
+Shorter contigs are to be expected in such a diverse and messy sample. The presence of a maximum contig of 65,854 bp indicates the presence of some identifiable viral contigs. 
+
+### Organized stats
+```bash
+$ nano seqkit_stats in /home/dsr84/viral_genomics/megahit/megahit_out
+```
 
 # 3/19
 Goals: Run virsorter, cluster
+Virsorter identifies viral contigs out of our sample which may contain bacteria or other microorganisms. It does this using complex pattern recognition and identifying non-cellular genes.
 
 ## 1. Virsorter
-### Setup:
+Setup virsorter in login node
+```bash
 $ module load mamba
 $ mamba create -y -n vs2-env -c conda-forge -c bioconda virsorter
 $ mamba activate vs2-env
-$ rm -rf db 	
-Run set up for database:
+$ rm -rf db
+```
+Load database for virsorter
+```bash
 $ virsorter setup -d db -j 4
+```
+Luby's virsorter slurm script can be found in virsorter file. 
 
-### Script:
-luby script
-#!/bin/bash
-#SBATCH --job-name=final_contigs_visorter1
-#SBATCH --nodes=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=20G
-#SBATCH --time=03:00:00
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=yc1201@georgetown.edu
-#SBATCH --output=/home/yc1201/viral_genomics/visorter1.%j.out
-#SBATCH --error=/home/yc1201/viral_genomics/visorter1.%j.err
-
- === Load mamba ===
-module load mamba
-conda activate vs2-env
-
-Activate the environment where you had VirSorter2 installed
-mamba activate vs2-env
-
-=== Set paths and filenames ===
-Set up directories
-INDIR=/home/yc1201/viral_genomics/megahit/
-OUTROOT=/home/yc1201/viral_genomics/visorter/
-mkdir -p "${OUTROOT}"
-
-SAMPLE_ID=sample5
-INPUT="${INDIR}/dori_luby_final.contigs.fa"
-OUTDIR="${OUTROOT}/vs2-${SAMPLE_ID}"
-
-mkdir -p "${OUTDIR}"
-
-==== Run virsorter2 with >5kb cutoff and DNA virus categories first
-echo "Running VirSorter2 on ${INPUT}"
-virsorter run \
-  -w "${OUTDIR}" \
-  -i "${INPUT}" \
-  --db-dir /home/yc1201/viral_genomics/virsorter-db \
-  --keep-original-seq \
-  --include-groups dsDNAphage,NCLDV,ssDNA \
-  --min-length 5000
-echo "Done."
-
-Dori's version (all on one line): virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa --keep-original-seq --include-groups dsDNAphage,NCLDV,ssDNA --min-length 5000
+Dori's version (all on one line): 
+```bash
+$ virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /home/dsr84/viral_genomics/megahit/megahit_out/final.contigs.fa --keep-original-seq --include-groups dsDNAphage,NCLDV,ssDNA --min-length 5000
+```
 (It worked!)
 
+
 ### Filtering for 5kB
-==== Counting how many contigs
-Need to use
-mamba install -c bioconda seqkit
-before
-seqkit seq -m 5000 final-viral-combined.fa | grep -c ">"
-which gives 128.
-Then,
+Filtering for contigs over 5kB is performed after virsorter.
+The purpose of this is to guarentee the highest chance of alignment software (bowtie2) being able to match viral contigs to their databases.
+While there are viruses with genomes smaller than 5kB, they will not be present in this analysis. 
+
+Filter for contigs <5000 kB and count how many contigs remain
+```bash
+$ mamba install -c bioconda seqkit
+$ seqkit seq -m 5000 final-viral-combined.fa | grep -c ">"
+```
+Moving into a new file
+```bash
 seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
+```
+128 contigs transfered. 
 
 # 3/23 
-
+Goal: vOTU generation
 ## Clustering using vclust
 
+```bash
 $ module load mamba
 $ mamba create -n votu-env -c bioconda -c conda-forge vclust
 $ mamba activate votu-env
-
+```
+```bash
 $ vclust prefilter -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o fltr.txt
 $ vclust align -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o ani.tsv --filter fltr.txt
 $ vclust cluster -i ani.tsv -o clusters.tsv --ids ani.ids.tsv --metric ani --ani 0.95 --out-repr
@@ -278,21 +264,25 @@ $ seqkit grep -f votu_seeds.txt /home/yc1201/viral_genomics_visorter/vs2-sample5
 
 $ wc -l votu_seeds.txt
 $ grep -c ">" votus_final.fna
+```
 
 Final location for all files from clustering: /home/yc1201/viral_genomics/clustering
 
 ## Upload to class bucket
 From inside the clustering directory, rename the final file to avoid confusion
+```bash
 $ mv votus_final.fna luby_dori_votus_final.fna
 $ gcloud storage cp luby_dori_votus_final.fna gs://gu-biology-dept-class/
+```
 
 ## CheckV
 ### Set up checkv database
+```bash
 $ module load checkv	
 $ checkv download_database ./
+```
 
 ### Script luby
-
 #!/bin/bash
 #SBATCH --job-name=checkv
 #SBATCH --output=/home/yc1201/viral_genomics/checkv-%j.out
@@ -377,43 +367,44 @@ samtools index "${SAMPLE}_sorted.bam"
 
 ## After Bowtie
 BAM file (binary code takes up less space than SAM file) was uploaded to the bucket
-File was too large for normal cp function, so was downloaded to local computer and uploaded to gcloud bucket GUI
+File was too large for normal cp function, so was downloaded to local computer and uploaded to gcloud bucket via GUI
 
 ## Data visualization!
 Combined vOTUs were converted into an excel spreadsheet and uploaded to R under the variable name votus. 
-Dori script: 
+Dori RStudio script: 
 
-tpm_threshold <- 10                      # keep vOTUs with max TPM > this
-heatmap_colors <- c("#440154", "#31688e", "#35b779", "#fde725")
-
+```bash
 library(readxl)
+votus <- ClassProject_votus.xlsx
+tpm_threshold <- 10                      # keep vOTUs with max TPM > this
+heatmap_colors <- c("#440154", "#31688e", "#35b779", "#fde725")      
 library(pheatmap)
 
-================================= Keep Contig and TPM columns only
+# Keep Contig and TPM columns only
 tpm_cols <- grepl("TPM$", names(votus))
 cov_tpm <- votus[ , c("Contig", names(votus)[tpm_cols])]
 
-================================= Remove S1k141_26921_full
+# Remove S1k141_26921_full
 cov_tpm <- subset(cov_tpm, Contig != "S1k141_26921||full")
 
-================================= Optional filter: drop very low-abundance vOTUs
+# Optional filter: drop very low-abundance vOTUs
 cov_tpm$max_tpm <- apply(cov_tpm[ , -1], 1, max, na.rm = TRUE)
 cov_tpm <- subset(cov_tpm, max_tpm > tpm_threshold)
 cov_tpm$max_tpm <- NULL
 
-=================================  If everything got filtered out (threshold too high), warn and stop
+# If everything got filtered out (threshold too high), warn and stop
 if (nrow(cov_tpm) == 0) {
   stop("No vOTUs passed the TPM threshold. Try lowering tpm_threshold.")
 }
 
-================================= Make matrix for heatmap (rows = vOTUs, cols = samples)
+# Make matrix for heatmap (rows = vOTUs, cols = samples)
 mat <- as.matrix(cov_tpm[ , -1])
 rownames(mat) <- cov_tpm$Contig
 
-================================= Log-transform for nicer color scaling
+# Log-transform for nicer color scaling
 mat_log <- log10(mat + 1)
 
-================================= Draw heat map
+# Draw heat map
 pheatmap(mat_log,
          cluster_rows = TRUE,
          cluster_cols = TRUE,
@@ -422,13 +413,11 @@ pheatmap(mat_log,
          fontsize_row = 4,
          fontsize_col = 8,
          main = "vOTU relative abundance (log10 TPM + 1)")
+```
 
-### Resulting heatmap 
+Resulting heatmap can be found in vOTU_Heatmap.png
 
-# Notes
-Lines in scripts with ------ should be commented 
-
-# Organization
+# Final Organization
 ## Dori
 directory: viral_genomics
 subdirectories: checkv, class_votus, db, fastqc, logs, megahit, raw, slurmscripts, trimmed_reads, virsorter, votus
