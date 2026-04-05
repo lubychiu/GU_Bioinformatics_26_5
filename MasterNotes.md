@@ -8,10 +8,11 @@ Cleaned reads Luby path: /yc1201/viral_genomics/trimmed_reads
 
 Actually accomplished: 
 ## 1. Loaded conda environment 
-$ module load anaconda 3
+'''$ module load anaconda 3
 $ conda create -n sra_env -c bioconda sra-tools
 -> y
 $ conda activate sra_env
+'''
 ## 2. Loaded data
 entered /viral_genomics/raw
 $ prefetch SAMN08784153
