@@ -145,8 +145,8 @@ Within viral_genomics: fastqc, logs, megahit, raw, slurmscripts, trimmed_reads
 Overall folder: viral_genomics
 Within viral_genomics: raw, fastqc_out, trimmed_reads, megahit
 
-## 5. Megahit
-Megahit assembles quality reads into contigs. 
+## 5. MEGAHIT
+MEGAHIT assembles quality reads into contigs. 
 Slurm script can be found in megahit file.
 
 ## 6. Assess assmebled reads
@@ -204,15 +204,15 @@ $ nano seqkit_stats in /home/dsr84/viral_genomics/megahit/megahit_out
 Goals: Run virsorter, cluster
 Virsorter identifies viral contigs out of our sample which may contain bacteria or other microorganisms. It does this using complex pattern recognition and identifying non-cellular genes.
 
-## 1. Virsorter
-Install virsorter
+## 1. VirSorter2
+Install VirSorter2
 ```bash
 $ module load mamba
 $ mamba create -y -n vs2-env -c conda-forge -c bioconda virsorter
 $ mamba activate vs2-env
 $ rm -rf db
 ```
-Load database for virsorter
+Load database for VirSorter2
 ```bash
 $ virsorter setup -d db -j 4 --conda-frontend conda
 ```
@@ -247,7 +247,7 @@ seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
 Goal: vOTU generation
 vOTUs are clusters of similar viral sequences, assumed to be the same viral species. Unlike cellular organisms that universally contain the 16S rRNA gene as a marker, viral clusters must be identified based on overlapping sequences in key areas. 
 
-## Clustering using vclust
+## Clustering using Vclust
 Install vclust
 ```bash
 $ module load mamba
