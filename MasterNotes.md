@@ -33,6 +33,17 @@ $ fastqc -o fastqc_out SRR6996011.fastq
 ```
 Output FASTQC Luby path: /yc1201//viral_genomics/fastqc_out
 
+### 4. Evaluate FASTQC of raw data
+- Total sequences: 7789043
+- Sequences flagged as poor quality: 0
+- Sequence length: 35-301. 
+- % GC: 46
+- Total bases: 1.7 Gbp
+- Per-base N content: increases after 264 bp
+- Sequence duplication level: 21.49 %
+- No adapter content
+- Overall read quality begins to be majority in the red area after 235 bp
+
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
 
@@ -113,7 +124,19 @@ That didn't work! Let's try again.
 We changed SLIDINGWINDOW to 2:20 instead of 2:15. Reads are now of an adequately high quality.
 Slurm script can be found in final_trimmomatic. 
 
-## 3. Reorganize files 
+## 3. Evaluation of final trimmed reads
+- Total paired end sequences surviving:	4883658, 62% of sequences
+- Sequences flagged as poor quality: 0
+- Sequence length: 75-301, compared to 35-301. Sequences under 50 bp were trimmed, and others were excluded for poor quality
+- % GC: 44, previously 46
+- Total bases: 838.7 Mbp, previously 1.7 Gbp, 49% of bases survived. 
+- Per-base N content, 0
+- No overrepresented sequences
+- No adapter content
+- R2 has some overlap in the red area after 240 bp, none for R1
+
+
+## 4. Reorganize files 
 ### Dori organization
 Overall folder: viral_genomics
 Within viral_genomics: fastqc, logs, megahit, raw, slurmscripts, trimmed_reads
@@ -122,13 +145,14 @@ Within viral_genomics: fastqc, logs, megahit, raw, slurmscripts, trimmed_reads
 Overall folder: viral_genomics
 Within viral_genomics: raw, fastqc_out, trimmed_reads, megahit
 
-## 4. Megahit
-
+## 5. Megahit
 Megahit assembles quality reads into contigs. 
-Slurm script can be found in megahit. 
+Slurm script can be found in megahit file.
 
-## 5. Assess assmebled reads
-$ grep ">" final.contigs.fa | wc -l 
+## 6. Assess assmebled reads
+```bash
+$ grep ">" final.contigs.fa | wc -l
+```
 Output: 21900 reads 
 
 Upload assembled reads to github
