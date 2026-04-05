@@ -6,7 +6,6 @@ What this accomplishes: finding correct parameters to trim data, improve the qua
 - Cleaned reads Dori path: /dsr84/viral_genomics/trimmed_reads
 - Cleaned reads Luby path: /yc1201/viral_genomics/trimmed_reads
 
-Actually accomplished: 
 ## 1. Loaded conda environment 
 ```bash
 $ module load anaconda 3
@@ -15,29 +14,39 @@ $ conda create -n sra_env -c bioconda sra-tools
 $ conda activate sra_env
 ```
 ## 2. Loaded data
-entered /viral_genomics/raw
+```bash
+# entered /viral_genomics/raw
 $ prefetch SAMN08784153
-change files into FASTQ format:
+# change files into FASTQ format:
 $ fasterq-dump *.sra
+``` 
 ## 3. Run FASTQC on raw data
-Enter interactive mode on a compute node (from where you are) with: $srun --pty bash
+```bash
+# Enter interactive mode on a compute node (from where you are)
+$ srun --pty bash
+# load fastqc
 $ module load fastqc
-Confirm fastqc is available: $ fastqc -h
-fastqc -o fastqc_out SRR6996011.fastq
+# Confirm fastqc is available:
+$ fastqc -h
+$ fastqc -o fastqc_out SRR6996011.fastq
+```
 Output FASTQC Luby path: /yc1201//viral_genomics/fastqc_out
+
+
  
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
 
 # 3/16
 Goals: Upload FASTQC file to bucket, Upload gzipped raw file to bucket, run trimmomatic, run FASTQC again
-Actually accomplished:
 ## 1. Could not upload gzip file to bucket
 It said dsr84@georgetown does not have access to upload to bucket ???
+Solution: Ensure full path to bucket, including /. gs://gu-biology-dept-class/
 
 ## 2. Upload FASTQC to bucket 
+```bash
 gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class/
-
+```
 ## 3. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
 We are planning to use the same parameters for HW 4
