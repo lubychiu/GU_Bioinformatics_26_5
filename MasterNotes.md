@@ -1,10 +1,10 @@
 # 3/12 
 Goals: run FASTQC, trimmommatic, then FASTQC again
 What this accomplishes: finding correct parameters to trim data, improve the quality of our data
-FASTQC Dori path: /dsr84/viral_genomics/raw
-FASTQC Luby path: /yc1201/viral_genomics/raw
-Cleaned reads Dori path: /dsr84/viral_genomics/trimmed_reads
-Cleaned reads Luby path: /yc1201/viral_genomics/trimmed_reads
+- FASTQC Dori path: /dsr84/viral_genomics/raw
+- FASTQC Luby path: /yc1201/viral_genomics/raw
+- Cleaned reads Dori path: /dsr84/viral_genomics/trimmed_reads
+- Cleaned reads Luby path: /yc1201/viral_genomics/trimmed_reads
 
 Actually accomplished: 
 ## 1. Loaded conda environment 
