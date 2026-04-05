@@ -10,13 +10,14 @@
 
 # Load mamba/conda module (students: no need to change) 
 
-$ module load mamba source 
-$ (mamba info --base)/etc/profile.d/conda.sh
+module load mamba source 
+(mamba info --base)/etc/profile.d/conda.sh
 
 #Activate the environment where you had MEGAHIT installed conda activate megahit-env
 
 # Set paths and filenames
 #Directory where the cleaned reads live 
+
 READDIR=/home/yc1201/viral_genomics/trimmed_reads
 
 #Input read files (paired-end) 
