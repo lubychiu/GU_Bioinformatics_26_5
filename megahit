@@ -1,5 +1,4 @@
-#!/bin/bash #SBATCH --job-name=megahit_SRR6996011
- #how job appears in the queue
+#!/bin/bash #SBATCH --job-name=megahit_SRR699601     #how job appears in the queue
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
@@ -9,17 +8,22 @@
 
 #note %j = job ID
 
-#====Load mamba/conda module (students: no need to change) ==== module load mamba source $(mamba info --base)/etc/profile.d/conda.sh
+# Load mamba/conda module (students: no need to change) 
+
+$ module load mamba source 
+$ (mamba info --base)/etc/profile.d/conda.sh
 
 #Activate the environment where you had MEGAHIT installed conda activate megahit-env
 
-#==== Set paths and filenames (students: edit this block!) ====
+# Set paths and filenames
+#Directory where the cleaned reads live 
+READDIR=/home/yc1201/viral_genomics/trimmed_reads
 
-#Directory where the cleaned reads live READDIR=/home/yc1201/viral_genomics/trimmed_reads
+#Input read files (paired-end) 
+READ1=${READDIR}/EC-12_R1_trmPE5.fq.gz 
+READ2=${READDIR}/EC-12_R2_trmPE5.fq.gz
 
-#Input read files (paired-end) READ1=${READDIR}/EC-12_R1_trmPE5.fq.gz READ2=${READDIR}/EC-12_R2_trmPE5.fq.gz
-
-#OUTDIR=/home/yc1201/viral_genomics/megahit/megahit_out
+OUTDIR=/home/yc1201/viral_genomics/megahit/megahit_out
 
 #==== Run MEGAHIT ====
 
