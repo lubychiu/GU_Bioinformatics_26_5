@@ -32,22 +32,30 @@ $ fastqc -o fastqc_out SRR6996011.fastq
 ```
 Output FASTQC Luby path: /yc1201//viral_genomics/fastqc_out
 
-
- 
 ## Future tasks:
 1. $ gzip *.fastq 2. Upload to bucket (Dori do both of these)
 
 # 3/16
 Goals: Upload FASTQC file to bucket, Upload gzipped raw file to bucket, run trimmomatic, run FASTQC again
-## 1. Could not upload gzip file to bucket
+
+## 1. zip FASTQC files and upload to bucket
+```bash
+$ gzip *.fastq
+$ gcloud storage cp SRR6996011.sra_2_fastqc.gzip gs://gu-biology-dept-class
+```
+## 2. Could not upload gzip file to bucket
 It said dsr84@georgetown does not have access to upload to bucket ???
 Solution: Ensure full path to bucket, including /. gs://gu-biology-dept-class/
 
-## 2. Upload FASTQC to bucket 
 ```bash
-gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class/
+$ gcloud storage cp SRR6996011.sra_2_fastqc.gzip gs://gu-biology-dept-class/
 ```
-## 3. Run trimmomatic 
+
+## 3. Upload FASTQC to bucket 
+```bash
+$ gcloud storage cp SRR6996011.sra_2_fastqc.html gs://gu-biology-dept-class/
+```
+## 4. Run trimmomatic 
 Based on graph, quality is worst after base 186 (all in the red) 
 We are planning to use the same parameters for HW 4
 Script Luby path: Cleaned reads Luby path: /yc1201/viral_genomics/trimmedreads/slurm 
@@ -86,11 +94,11 @@ trimmomatic PE -threads 4 \
         SLIDINGWINDOW:4:15 \
         MINLEN:75
 
-## 4. Run FASTQC again
+## 5. Run FASTQC again
 $fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmPE1.fq.gz RR6996011_R2_TrmPE1.fq.gz
 $fastqc -o trimmed_fastqc_out SRR6996011_R1_TrmSE1.fq.gz RR6996011_R2_TrmSE1.fq.gz
 
-## 5. Downloading fastqc outputs to local computer
+## 6. Downloading fastqc outputs to local computer
 ### Incorrect 
 FROM LOCAL COMPUTER, $ gcloud compute scp/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R1_TrmPE1.fastqc.html ~/Downloads/
 We got errors saying the source must be remote if the file is local, but are unsure what that means ^
@@ -102,10 +110,10 @@ $ gcloud compute scp m12-controller:/home/yc1201/viral_genomics/trimmed_reads/tr
 Then the same for R2 PE
 $ gcloud compute scp m12-controller/home/yc1201/viral_genomics/trimmed_reads/trimmed_fastqc_out/SRR6996011_R2_TrmPE1.fastqc.html ~/Downloads/
 
-## 6. Evaluating trimmomatic results
+## 7. Evaluating trimmomatic results
 R1 looks great! R2 not so much, so we're going to trim them both again using the same parameters
 
-## 7. Run trimmomatic again 
+## 8. Run trimmomatic again 
 SCRIPT:
 #!/bin/bash
 #SBATCH --job-name="trim_viral_genomics2"
@@ -144,7 +152,7 @@ trimmomatic PE -threads 4 \
 
 New outputs: PE2
 
-## 8. Run FASTQC on the second-trimmed files
+## 9. Run FASTQC on the second-trimmed files
 fastqc -o trimmed_fastqc_out2 SRR6996011_R1_trmPE2.fq.gz SRR6996011_R2_trmPE2.fq.gz
 Oh they still don't look great, probably because using the exact same parameters doesn't do anything. 
 
