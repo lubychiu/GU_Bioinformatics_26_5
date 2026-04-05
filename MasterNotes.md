@@ -205,7 +205,7 @@ Goals: Run virsorter, cluster
 Virsorter identifies viral contigs out of our sample which may contain bacteria or other microorganisms. It does this using complex pattern recognition and identifying non-cellular genes.
 
 ## 1. Virsorter
-Setup virsorter in login node
+Install virsorter
 ```bash
 $ module load mamba
 $ mamba create -y -n vs2-env -c conda-forge -c bioconda virsorter
@@ -214,8 +214,9 @@ $ rm -rf db
 ```
 Load database for virsorter
 ```bash
-$ virsorter setup -d db -j 4
+$ virsorter setup -d db -j 4 --conda-frontend conda
 ```
+
 Luby's virsorter slurm script can be found in virsorter file. 
 
 Dori's version (all on one line): 
@@ -224,6 +225,7 @@ $ virsorter run -w "/home/dsr84/viral_genomics/virsorter/vs2-SRR6996011" -i /hom
 ```
 (It worked!)
 
+Final results are in a file called final-viral-combined.fa, not loaded here. This is the file that moves through the rest of the workflow. 
 
 ### Filtering for 5kB
 Filtering for contigs over 5kB is performed after virsorter.
@@ -243,26 +245,39 @@ seqkit seq -m 5000 final-viral-combined.fa > final-viral-combined_min5kb.fa
 
 # 3/23 
 Goal: vOTU generation
-## Clustering using vclust
+vOTUs are clusters of similar viral sequences, assumed to be the same viral species. Unlike cellular organisms that universally contain the 16S rRNA gene as a marker, viral clusters must be identified based on overlapping sequences in key areas. 
 
+## Clustering using vclust
+Install vclust
 ```bash
 $ module load mamba
 $ mamba create -n votu-env -c bioconda -c conda-forge vclust
 $ mamba activate votu-env
 ```
+
 ```bash
+# Prefilter similar genome sequence pairs before conducting pairwise alignments
 $ vclust prefilter -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o fltr.txt
+
+# Align similar genome sequence pairs and calculate pairwise ANI measures.
 $ vclust align -i /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa -o ani.tsv --filter fltr.txt
+
+# Cluster genome sequences based on given ANI measure and minimum threshold (these files were generated in the previous steps)
 $ vclust cluster -i ani.tsv -o clusters.tsv --ids ani.ids.tsv --metric ani --ani 0.95 --out-repr
 
+# make a list of the vOTU headers
 $ awk '{print $2}' clusters.tsv | sort -u > votu_seeds.txt
-
+```
+Entering vOTU seed sequences into a new file
+```bash
+# must deactivate mamba and enter into a new mamba environment 
 $ mamba deactivate
 $ mamba activate megahit-env
 
 $ seqkit grep -f votu_seeds.txt /home/yc1201/viral_genomics_visorter/vs2-sample5/final-viral-combined_min5kb.fa > votus_final.fna
 
 $ wc -l votu_seeds.txt
+# should have the same number of clusters 
 $ grep -c ">" votus_final.fna
 ```
 
@@ -270,50 +285,21 @@ Final location for all files from clustering: /home/yc1201/viral_genomics/cluste
 
 ## Upload to class bucket
 From inside the clustering directory, rename the final file to avoid confusion
+
 ```bash
 $ mv votus_final.fna luby_dori_votus_final.fna
 $ gcloud storage cp luby_dori_votus_final.fna gs://gu-biology-dept-class/
 ```
 
 ## CheckV
+CheckV assesses the quality and completeness of vOTUs
 ### Set up checkv database
+
 ```bash
 $ module load checkv	
 $ checkv download_database ./
 ```
-
-### Script luby
-#!/bin/bash
-#SBATCH --job-name=checkv
-#SBATCH --output=/home/yc1201/viral_genomics/checkv-%j.out
-#SBATCH --error=/home/yc1201/viral_genomics/checkv-%j.err
-#SBATCH --time=03:00:00
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=16G
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=yc1201@georgetown.edu
-
- ==== Load checkv program module (students: no need to change) ====
-
-module load checkv
-
-
- ==== Set variables, paths, and filenames (students: edit this block!) ====
-
-CHECKVDB="/home/yc1201/viral_genomics/checkv/checkv-db-v1.5"
-
-SAMPLE_ID="vOTUs"
-INPUT="/home/yc1201/viral_genomics/clustering/luby_dori_votus_final.fna"
-OUTDIR="/home/yc1201/viral_genomics/checkv/${SAMPLE_ID}"
-
-mkdir -p "${OUTDIR}"
-
- ==== run checkv (students: no need to change. The second line is the command) ====
-echo "Running CheckV on ${INPUT}"
-checkv end_to_end "${INPUT}" "${OUTDIR}" -d "${CHECKVDB}" -t ${SLURM_CPUS_PER_TASK}
-echo "Done."
+Slurm script can be found in checkv file.
 
 Our contigs look good! Mostly lower quality but we have a few with "comeplete" or "high quality"
 
