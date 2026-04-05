@@ -1,0 +1,40 @@
+#!/bin/bash
+#SBATCH --job name=bowtie2_vOTUs
+#SBATCH --output=/home/yc1201/viral_genomics/bowtie-%j.out
+#SBATCH --error=/home/yc1201/viral_genomics/bowtie-%j.err
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=yc1201@georgetown.edu
+#SBATCH --time=8:00:00
+#SBATCH --mem=16G
+
+# ---------SET UP----------
+SAMPLE="sample6_yc1201"
+INDEX="/home/yc1201/viral_genomics/bowtie/votu_index"
+OUTPUTDIR="/home/yc1201/viral_genomics/bowtie"
+
+# --------- LOAD MODULES ----------
+module purge
+module load bowtie2/2.5.4
+
+# --------- RUN BOWTIE2 AND PIPE TO SAMTOOLS ----------
+
+# First make output and log directories; move into OUTPUTDIR
+mkdir -p "${OUTPUTDIR}"
+cd "${OUTPUTDIR}"
+mkdir -p logs
+
+echo "Running bowtie2 on sample ${SAMPLE}"
+
+bowtie2 -p 8 -x "${INDEX}" -1 "/home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R1_trmPE5.fq.gz" -2 " /home/yc1201/viral_genomics/trimmed_reads/SRR6996011_R2_trmPE5.fq.gz" \
+| samtools view -bS - > "${SAMPLE}.bam"
+
+echo "Finished running bowtie2 and performing compression"
+
+#---------sort and index files
+echo "Sorting"
+samtools sort "${SAMPLE}.bam" > "${SAMPLE}_sorted.bam"
+
+echo "Indexing"
+samtools index "${SAMPLE}_sorted.bam"
+
+
