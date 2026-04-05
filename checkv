@@ -10,12 +10,11 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=yc1201@georgetown.edu
 
-# ==== Load checkv program module (students: no need to change) ====
+# ==== Load checkv program module  ====
 
 module load checkv
 
-
-# ==== Set variables, paths, and filenames (students: edit this block!) ====
+# ==== Set variables, paths, and filenames ====
 
 CHECKVDB="/home/yc1201/viral_genomics/checkv/checkv-db-v1.5"
 
